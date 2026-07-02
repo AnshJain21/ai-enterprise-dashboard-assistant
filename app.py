@@ -1,7 +1,7 @@
 """
 AI Enterprise Dashboard Assistant
 ==================================
-Free-tier stack: Streamlit + Groq API (free) + local embeddings + ChromaDB (local, free).
+Free-tier stack: Streamlit + Groq API (free) + local embeddings + a lightweight in-memory vector store.
 
 Run locally:
     1. pip install -r requirements.txt

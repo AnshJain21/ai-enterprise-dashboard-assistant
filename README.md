@@ -8,7 +8,7 @@ built entirely on **free** tiers, no OpenAI subscription required.
 - **LLM (chat/summarization):** Groq API (free tier — no credit card needed)
 - **Embeddings:** local, via `sentence-transformers` (no API call, no cost)
 - **UI:** Streamlit
-- **Vector store:** ChromaDB (local, in-memory, no signup)
+- **Vector store:** In-memory numpy vector store (no external DB needed)
 - **Data handling:** pandas
 
 ## Setup
@@ -43,7 +43,7 @@ streamlit run app.py
 
 ### Document Summarization tab
 1. Upload one or more PDF/DOCX/TXT files.
-2. Each document is chunked, embedded, and stored in a local ChromaDB
+2. Each document is chunked, embedded, and stored in a local in-memory vector store (see utils/vector_store.py)
    collection (cleared when the session ends — nothing persists to disk).
 3. "Summarize" pulls all chunks for one document and asks the model for
    an executive summary.

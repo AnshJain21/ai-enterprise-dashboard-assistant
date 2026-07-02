@@ -3,21 +3,20 @@ Retrieval-augmented Q&A / summarization over uploaded documents.
 
 Flow:
   1. Chunk each document.
-  2. Embed chunks with Gemini's embedding model, store in a local
-     in-memory ChromaDB collection (per Streamlit session).
+  2. Embed chunks locally (sentence-transformers), store in an in-memory
+     vector store (per Streamlit session).
   3. On a question, embed the question, retrieve the top-k nearest
      chunks, and ask the model to answer using only those chunks.
 """
 import uuid
-import chromadb
 from utils.llm_client import chat, embed
 from utils.doc_loader import extract_text, chunk_text
+from utils.vector_store import VectorStore
 
 
-def get_collection():
-    """Fresh in-memory Chroma client per Streamlit session (see app.py)."""
-    client = chromadb.EphemeralClient()
-    return client.get_or_create_collection(name="documents")
+def get_collection() -> VectorStore:
+    """Fresh in-memory vector store per Streamlit session (see app.py)."""
+    return VectorStore()
 
 
 def add_document(collection, filename: str, file_bytes: bytes) -> int:
