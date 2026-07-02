@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 
 from utils.data_qa import answer_question
 from utils.doc_qa import get_collection, add_document, ask, summarize_document
+from utils.charts import CHART_TYPES, numeric_columns, categorical_columns, build_chart
 
 load_dotenv()
 
@@ -68,6 +69,36 @@ with tab_data:
         df = st.session_state.df
         st.dataframe(df.head(20), use_container_width=True)
         st.caption(f"{len(df)} rows × {len(df.columns)} columns loaded")
+
+        st.divider()
+        st.subheader("Build a chart")
+        num_cols = numeric_columns(df)
+        cat_cols = categorical_columns(df)
+        all_cols = df.columns.tolist()
+
+        chart_col1, chart_col2, chart_col3, chart_col4 = st.columns(4)
+        with chart_col1:
+            chart_type = st.selectbox("Chart type", CHART_TYPES, key="chart_type")
+        with chart_col2:
+            x_col = st.selectbox("X-axis", all_cols, key="chart_x")
+        with chart_col3:
+            y_options = ["(none)"] + num_cols
+            needs_y = chart_type in ("Bar", "Line", "Scatter", "Pie", "Box")
+            y_col = st.selectbox("Y-axis" + (" (required)" if needs_y else " (optional)"), y_options, key="chart_y")
+        with chart_col4:
+            color_options = ["(none)"] + cat_cols
+            color_col = st.selectbox("Color by (optional)", color_options, key="chart_color")
+
+        if st.button("Generate chart", key="chart_btn"):
+            try:
+                y_arg = None if y_col == "(none)" else y_col
+                fig = build_chart(df, chart_type, x_col, y_arg, color_col)
+                st.session_state.current_chart = fig
+            except ValueError as e:
+                st.warning(str(e))
+
+        if "current_chart" in st.session_state:
+            st.plotly_chart(st.session_state.current_chart, use_container_width=True)
 
         st.divider()
         st.subheader("Ask a question about this data")
